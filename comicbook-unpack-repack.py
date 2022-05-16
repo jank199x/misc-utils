@@ -1,9 +1,10 @@
 #! /usr/bin/env python
 
-import subprocess
 import glob
-import click
+import subprocess
 from enum import Enum
+
+import click
 
 
 class Actions(Enum):
