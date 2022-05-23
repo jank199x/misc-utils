@@ -2,16 +2,27 @@
 
 import os
 import re
+import subprocess
 from datetime import datetime
 from glob import glob
 
 
 def _addtimestamp(filename: str) -> str:
-    created_epoch = os.path.getctime(filename)
-    created_datetime = datetime.fromtimestamp(created_epoch)
-    formatted_datetime = created_datetime.strftime("%y%m%d-%H%M%S")
+    stat_result = subprocess.run(["stat", "-c", "%W", filename], capture_output=True)
+    created_epoch = int(stat_result.stdout)
 
-    formatted_filename = re.sub(r"[^a-zA-Z0-9\s]", "", filename)
+    updated_epoch = os.path.getmtime(filename)
+
+    timestamp_epoch = updated_epoch if updated_epoch < created_epoch else created_epoch
+
+    timestamp_datetime = datetime.fromtimestamp(timestamp_epoch)
+    formatted_datetime = timestamp_datetime.strftime("%y%m%d-%H%M%S")
+
+    timestamped = re.match("[\d]{6}\-[\d]{6}.*\.md", filename)
+    if timestamped:
+        filename = filename[14:]
+
+    formatted_filename = re.sub(r"[^a-zA-Z0-9\s\-]", "", filename)
     formatted_filename = formatted_filename[:-2]
     formatted_filename = "-".join(formatted_filename.split()[:5])
     formatted_filename = formatted_filename.lower()
@@ -29,11 +40,10 @@ def addtimestamp() -> None:
 
     for i, note in enumerate(markdown_notes):
         while True:
-            yaynay = input(f"{i+1}/{total}: Rename {note}? Y/N/Q\n")
-            if yaynay in "Yy":
-                new_name = _addtimestamp(note)
-                print(f"{note} -> {new_name}")
-                # os.rename(note, new_name)
+            new_name = _addtimestamp(note)
+            yaynay = input(f"{i+1}/{total}: Rename {note} -> {new_name}? [Y]/n/q\n")
+            if yaynay in "Yy" or yaynay == "":
+                os.rename(note, new_name)
                 break
             elif yaynay in "Nn":
                 break
