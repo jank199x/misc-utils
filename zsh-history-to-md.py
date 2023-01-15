@@ -9,7 +9,7 @@ def main():
     history = DefaultDict(list)
     with open(sys.argv[1], "rb") as f:
         for line in f.readlines():
-            line = line.decode('utf-8',errors='ignore')
+            line = line.decode("utf-8", errors="ignore")
             line = line.split(";")[-1]
             try:
                 if line.split()[0] == "sudo":
