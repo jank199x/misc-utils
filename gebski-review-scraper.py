@@ -147,7 +147,7 @@ def parse_review(review) -> dict:
 
 def dump_to_file(reviews: list, filename: str = "sample") -> None:
 
-    json_object = json.dumps(reviews, indent=4)
+    json_object = json.dumps(reviews, indent=4, ensure_ascii=False)
     with open(filename + ".json", "w") as outfile:
         outfile.write(json_object)
 
