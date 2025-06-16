@@ -16,4 +16,4 @@
 *   **Zsh History Report v1** (_zsh-history-to-md.py_): Script to parse a zsh history file and generate a markdown file where commands are grouped by the first word.
 
 ---
-Jank '22
+Jank '25
